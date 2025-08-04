@@ -1,10 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<nav>
+  <ul>
+    {% if current_user.is_authenticated %}
+      <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+      <li><a href="{{ url_for('anuncio.list') }}">Meus Anúncios</a></li>
+      <li><a href="{{ url_for('categoria.list') }}">Categorias</a></li>
+      <li><a href="{{ url_for('favorito.list') }}">Favoritos</a></li>
+      <li><a href="{{ url_for('relatorios.vendas') }}">Relatório Vendas</a></li>
+      <li><a href="{{ url_for('relatorios.compras') }}">Relatório Compras</a></li>
+      <li><a href="{{ url_for('auth.logout') }}">Sair</a></li>
+    {% else %}
+      <li><a href="{{ url_for('auth.login') }}">Login</a></li>
+      <li><a href="{{ url_for('auth.register') }}">Cadastro</a></li>
+    {% endif %}
+  </ul>
+</nav>
