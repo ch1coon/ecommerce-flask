@@ -1,0 +1,23 @@
+# PyCharm
+.idea/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# Environments
+.env
+.venv/
+venv/
+cdbu
+
+# Logs
+*.log
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
