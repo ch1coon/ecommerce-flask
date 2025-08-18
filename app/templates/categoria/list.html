@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Categorias</h1>
+<a href="{{ url_for('categoria.create_categoria') }}">Nova Categoria</a>
+<table border="1">
+    <tr>
+        <th>Nome</th>
+        <th>Ações</th>
+    </tr>
+    {% for categoria in categorias %}
+    <tr>
+        <td>{{ categoria.nome }}</td>
+        <td>
+            <a href="{{ url_for('categoria.get_categoria', id=categoria.id) }}">Ver</a> |
+            <a href="{{ url_for('categoria.update_categoria', id=categoria.id) }}">Editar</a> |
+            <form action="{{ url_for('categoria.delete_categoria', id=categoria.id) }}" method="post" style="display:inline;">
+                <button type="submit" onclick="return confirm('Tem certeza que deseja excluir?');">Excluir</button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

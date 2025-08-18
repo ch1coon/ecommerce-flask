@@ -15,6 +15,7 @@ class Anuncio(db.Model):
     usuario_id = db.Column(db.Integer, db.ForeignKey("usuario.id"), nullable=False)
     categoria_id = db.Column(db.Integer, db.ForeignKey("categoria.id"), nullable=False)
 
+    usuario = db.relationship("Usuario", back_populates="anuncios")
     perguntas = db.relationship("Pergunta", backref="anuncio", lazy=True)
     compras = db.relationship("Compra", backref="anuncio", lazy=True)
     favoritos = db.relationship("Favorito", backref="anuncio", lazy=True)

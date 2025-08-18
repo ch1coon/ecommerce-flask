@@ -14,6 +14,7 @@ class Pergunta(db.Model):
     anuncio_id = db.Column(db.Integer, db.ForeignKey("anuncio.id"), nullable=False)
 
     resposta = db.relationship("Resposta", uselist=False, backref="pergunta")
+    usuario = db.relationship("Usuario", back_populates="perguntas", lazy=True)
 
     def __repr__(self):
         return f"<Pergunta {self.id}>"

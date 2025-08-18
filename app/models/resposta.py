@@ -13,5 +13,7 @@ class Resposta(db.Model):
     pergunta_id = db.Column(db.Integer, db.ForeignKey("pergunta.id"), nullable=False)
     usuario_id = db.Column(db.Integer, db.ForeignKey("usuario.id"), nullable=False)
 
+    usuario = db.relationship("Usuario", back_populates="respostas")
+
     def __repr__(self):
         return f"<Resposta {self.id}>"

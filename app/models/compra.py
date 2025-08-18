@@ -13,5 +13,7 @@ class Compra(db.Model):
     usuario_id = db.Column(db.Integer, db.ForeignKey("usuario.id"), nullable=False)
     anuncio_id = db.Column(db.Integer, db.ForeignKey("anuncio.id"), nullable=False)
 
+    usuario = db.relationship("Usuario", back_populates="compras", lazy=True)
+
     def __repr__(self):
         return f"<Compra {self.id} - R${self.valor_pago}>"

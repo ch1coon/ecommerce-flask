@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Minhas Respostas</h1>
+<a href="{{ url_for('resposta.nova_resposta') }}">Nova Resposta</a>
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Pergunta</th>
+        <th>Resposta</th>
+        <th>Ações</th>
+    </tr>
+    {% for resposta in respostas %}
+    <tr>
+        <td>{{ resposta.id }}</td>
+        <td>{{ resposta.pergunta_id }}</td>
+        <td>{{ resposta.texto }}</td>
+        <td>
+            <a href="{{ url_for('resposta.detalhe_resposta', id=resposta.id) }}">Ver</a> |
+            <a href="{{ url_for('resposta.editar_resposta', id=resposta.id) }}">Editar</a> |
+            <form action="{{ url_for('resposta.excluir_resposta', id=resposta.id) }}" method="post" style="display:inline;">
+                <button type="submit" onclick="return confirm('Tem certeza que deseja excluir?');">Excluir</button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
+

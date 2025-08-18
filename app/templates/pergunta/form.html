@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>{% if pergunta %}Editar Pergunta{% else %}Nova Pergunta{% endif %}</h1>
+<form method="post">
+    <label for="anuncio_id">Anúncio:</label><br>
+    <select id="anuncio_id" name="anuncio_id" required>
+        <option value="">Selecione</option>
+        {% for anuncio in anuncios %}
+            <option value="{{ anuncio.id }}" {% if pergunta and pergunta.anuncio_id == anuncio.id %}selected{% endif %}>{{ anuncio.titulo }}</option>
+        {% endfor %}
+    </select><br><br>
+    <label for="texto">Pergunta:</label><br>
+    <textarea id="texto" name="texto" required>{{ pergunta.texto if pergunta else '' }}</textarea><br><br>
+    <button type="submit">Salvar</button>
+    <a href="{{ url_for('pergunta.listar_perguntas') }}">Cancelar</a>
+</form>
+{% endblock %}
+

@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Detalhes da Resposta</h1>
+<p><strong>ID:</strong> {{ resposta.id }}</p>
+<p><strong>Pergunta:</strong> {{ resposta.pergunta_id }}</p>
+<p><strong>Resposta:</strong> {{ resposta.texto }}</p>
+<p><strong>Criada em:</strong> {{ resposta.criado_em.strftime('%d/%m/%Y %H:%M') if resposta.criado_em else '' }}</p>
+<a href="{{ url_for('resposta.editar_resposta', id=resposta.id) }}">Editar</a>
+<a href="{{ url_for('resposta.listar_respostas') }}">Voltar para lista</a>
+{% endblock %}
+

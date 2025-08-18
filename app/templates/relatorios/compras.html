@@ -1,10 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-
-</body>
-</html>
+{% extends 'base.html' %}
+{% block content %}
+<h1>Relatório de Compras</h1>
+<table border="1">
+    <tr>
+        <th>Anúncio</th>
+        <th>Valor Pago</th>
+        <th>Vendedor</th>
+        <th>Data da Compra</th>
+    </tr>
+    {% for compra in compras %}
+    <tr>
+        <td>{{ compra.anuncio.titulo }}</td>
+        <td>R$ {{ compra.valor_pago }}</td>
+        <td>{{ compra.anuncio.usuario.nome if compra.anuncio else '' }}</td>
+        <td>{{ compra.data_compra.strftime('%d/%m/%Y %H:%M') if compra.data_compra else '' }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

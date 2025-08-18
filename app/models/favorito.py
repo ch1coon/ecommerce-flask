@@ -12,5 +12,7 @@ class Favorito(db.Model):
     usuario_id = db.Column(db.Integer, db.ForeignKey("usuario.id"), nullable=False)
     anuncio_id = db.Column(db.Integer, db.ForeignKey("anuncio.id"), nullable=False)
 
+    usuario = db.relationship("Usuario", back_populates="favoritos")
+
     def __repr__(self):
         return f"<Favorito anuncio={self.anuncio_id} usuario={self.usuario_id}>"
