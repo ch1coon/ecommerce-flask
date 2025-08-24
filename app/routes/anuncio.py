@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for
+from flask import Blueprint, render_template, request, redirect, url_for, flash
 from ..models import Anuncio, Categoria
 from .. import db
 from flask_login import login_required, current_user
@@ -18,15 +18,25 @@ def list_anuncio():
 def create_anuncio():
     categorias = Categoria.query.all()
     if request.method == 'POST':
+        preco_str = request.form['preco'].replace('.', '').replace(',', '.')
+        try:
+            preco = float(preco_str)
+        except ValueError:
+            preco = 0.0
+        if preco <= 0:
+            flash('O valor do anúncio deve ser maior que zero.', 'danger')
+
+            return render_template('anuncio/form.html', categorias=categorias, form=request.form)
         a = Anuncio(
             titulo=request.form['titulo'],
             descricao=request.form['descricao'],
-            preco=request.form['preco'],
+            preco=preco,
             usuario_id=current_user.id,
             categoria_id=request.form['categoria']
         )
         db.session.add(a)
         db.session.commit()
+        flash('Anúncio criado com sucesso!', 'success')
         return redirect(url_for('anuncio.list_anuncio'))
     return render_template('anuncio/form.html', categorias=categorias)
 
@@ -48,12 +58,18 @@ def update_anuncio(id):
         return redirect(url_for('anuncio.list_anuncio'))
     categorias = Categoria.query.all()
     if request.method == 'POST':
+        preco_str = request.form['preco'].replace('.', '').replace(',', '.')
+        try:
+            preco = float(preco_str)
+        except ValueError:
+            preco = 0.0
         anuncio.titulo = request.form['titulo']
         anuncio.descricao = request.form['descricao']
-        anuncio.preco = request.form['preco']
+        anuncio.preco = preco
         anuncio.categoria_id = request.form['categoria']
         db.session.commit()
-        return redirect(url_for('anuncio.get_anuncio', id=anuncio.id))
+        flash('Anúncio editado com sucesso!', 'success')
+        return redirect(url_for('anuncio.list_anuncio'))
     return render_template('anuncio/form.html', anuncio=anuncio, categorias=categorias)
 
 
@@ -65,6 +81,7 @@ def delete_anuncio(id):
         return redirect(url_for('anuncio.list_anuncio'))
     db.session.delete(anuncio)
     db.session.commit()
+    flash('Anúncio deletado com sucesso!', 'success')
     return redirect(url_for('anuncio.list_anuncio'))
 
 
@@ -96,7 +113,16 @@ def publico_detail(id):
             'pergunta': pergunta,
             'resposta': getattr(pergunta, 'resposta', None)
         })
-    return render_template('anuncio/publico_detail.html', anuncio=anuncio, perguntas_respostas=perguntas_respostas)
+
+    is_favorito = False
+    favorito_id = None
+    if current_user.is_authenticated:
+        from ..models.favorito import Favorito
+        favorito = Favorito.query.filter_by(usuario_id=current_user.id, anuncio_id=anuncio.id).first()
+        if favorito:
+            is_favorito = True
+            favorito_id = favorito.id
+    return render_template('anuncio/publico_detail.html', anuncio=anuncio, perguntas_respostas=perguntas_respostas, is_favorito=is_favorito, favorito_id=favorito_id)
 
 
 @anuncio_bp.route('/<int:anuncio_id>/responder/<int:pergunta_id>', methods=['POST'])

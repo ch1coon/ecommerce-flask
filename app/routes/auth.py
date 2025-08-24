@@ -12,12 +12,20 @@ def login():
         email = request.form['email']
         senha = request.form['senha']
         usuario = Usuario.query.filter_by(email=email).first()
-        if usuario and check_password_hash(usuario.senha_hash, senha):
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            if not usuario:
+                return {'success': False, 'error': 'E-mail não cadastrado.'}, 400
+            if not check_password_hash(usuario.senha_hash, senha):
+                return {'success': False, 'error': 'Senha incorreta.'}, 401
             login_user(usuario)
-            flash('Login realizado com sucesso!', 'success')
-            return redirect(url_for('dashboard'))
+            return {'success': True, 'redirect': url_for('dashboard')}
         else:
-            flash('E-mail ou senha inválidos.', 'danger')
+            if usuario and check_password_hash(usuario.senha_hash, senha):
+                login_user(usuario)
+                flash('Login realizado com sucesso!', 'success')
+                return redirect(url_for('dashboard'))
+            else:
+                flash('E-mail ou senha inválidos.', 'danger')
     return render_template('login.html')
 
 @auth_bp.route('/register', methods=['GET', 'POST'])
@@ -35,7 +43,7 @@ def register():
         usuario.senha_hash = generate_password_hash(senha)
         db.session.add(usuario)
         db.session.commit()
-        flash('Cadastro realizado com sucesso! Faça login.')
+        flash('Cadastro realizado com sucesso! Faça login.', 'success')
         return redirect(url_for('auth.login'))
     return render_template('register.html')
 
@@ -44,4 +52,4 @@ def register():
 def logout():
     logout_user()
     flash('Logout realizado com sucesso!', 'success')
-    return redirect(url_for('auth.login'))
+    return redirect(url_for('home'))

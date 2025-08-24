@@ -1,17 +1,48 @@
-<nav>
-  <ul>
-    <li><a href="{{ url_for('anuncio.explorar_anuncios') }}">Explorar Anúncios</a></li>
-    {% if current_user.is_authenticated %}
-      <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
-      <li><a href="{{ url_for('anuncio.list_anuncio') }}">Meus Anúncios</a></li>
-      <li><a href="{{ url_for('categoria.list_categoria') }}">Categorias</a></li>
-      <li><a href="{{ url_for('favorito.list_favorito') }}">Favoritos</a></li>
-      <li><a href="{{ url_for('relatorios.vendas') }}">Relatório Vendas</a></li>
-      <li><a href="{{ url_for('relatorios.compras') }}">Relatório Compras</a></li>
-      <li><a href="{{ url_for('auth.logout') }}">Sair</a></li>
-    {% else %}
-      <li><a href="{{ url_for('auth.login') }}">Login</a></li>
-      <li><a href="{{ url_for('auth.register') }}">Cadastro</a></li>
-    {% endif %}
-  </ul>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{% if current_user.is_authenticated %}{{ url_for('dashboard') }}{% else %}{{ url_for('home') }}{% endif %}">E-commerce</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link text-white{% if request.endpoint == 'anuncio.explorar_anuncios' %} active{% endif %}" href="{{ url_for('anuncio.explorar_anuncios') }}">Explorar Anúncios</a>
+        </li>
+        {% if current_user.is_authenticated %}
+          <li class="nav-item"><a class="nav-link text-white{% if request.endpoint == 'categoria.list_categoria' %} active{% endif %}" href="{{ url_for('categoria.list_categoria') }}" style="display:none;">Categorias</a></li>
+          <li class="nav-item"><a class="nav-link text-white{% if request.endpoint == 'favorito.list_favorito' %} active{% endif %}" href="{{ url_for('favorito.list_favorito') }}" style="display:none;">Favoritos</a></li>
+          <li class="nav-item"><a class="nav-link text-white{% if request.endpoint == 'relatorios.vendas' %} active{% endif %}" href="{{ url_for('relatorios.vendas') }}" style="display:none;">Relatório Vendas</a></li>
+          <li class="nav-item"><a class="nav-link text-white{% if request.endpoint == 'relatorios.compras' %} active{% endif %}" href="{{ url_for('relatorios.compras') }}" style="display:none;">Relatório Compras</a></li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle text-white" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              {{ current_user.nome }}
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="userDropdown">
+              <li class="dropdown-submenu dropdown-submenu-left">
+                <a class="dropdown-item dropdown-toggle" href="#">Anúncios</a>
+                <ul class="dropdown-menu dropdown-menu-left">
+                  <li><a class="dropdown-item" href="{{ url_for('anuncio.list_anuncio') }}">Meus Anúncios</a></li>
+                  <li><a class="dropdown-item" href="{{ url_for('categoria.list_categoria') }}">Categorias</a></li>
+                  <li><a class="dropdown-item" href="{{ url_for('favorito.list_favorito') }}">Favoritos</a></li>
+                </ul>
+              </li>
+              <li class="dropdown-submenu dropdown-submenu-left">
+                <a class="dropdown-item dropdown-toggle" href="#">Relatórios</a>
+                <ul class="dropdown-menu dropdown-menu-left">
+                  <li><a class="dropdown-item" href="{{ url_for('relatorios.vendas') }}">Vendas</a></li>
+                  <li><a class="dropdown-item" href="{{ url_for('relatorios.compras') }}">Compras</a></li>
+                </ul>
+              </li>
+              <hr class="dropdown-divider">
+              <li><a class="dropdown-item text-danger" href="{{ url_for('auth.logout') }}">Sair</a></li>
+            </ul>
+          </li>
+        {% else %}
+          <li class="nav-item"><a class="nav-link text-white{% if request.endpoint == 'auth.login' %} active{% endif %}" href="{{ url_for('auth.login') }}">Login</a></li>
+          <li class="nav-item"><a class="nav-link text-white{% if request.endpoint == 'auth.register' %} active{% endif %}" href="{{ url_for('auth.register') }}">Cadastro</a></li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
 </nav>

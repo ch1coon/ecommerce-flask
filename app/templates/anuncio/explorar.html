@@ -1,41 +1,60 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1>Explorar Anúncios</h1>
-<form method="get" style="margin-bottom: 20px;">
-    <label for="categoria">Filtrar por categoria:</label>
-    <select name="categoria" id="categoria" onchange="this.form.submit()">
-        <option value="">Todas</option>
-        {% for categoria in categorias %}
-            <option value="{{ categoria.id }}" {% if categoria_id == categoria.id %}selected{% endif %}>{{ categoria.nome }}</option>
-        {% endfor %}
-    </select>
-    {% if current_user.is_authenticated %}
-        <label style="margin-left: 20px;">
-            <input type="checkbox" name="favoritos" value="1" onchange="this.form.submit()" {% if favoritos_only %}checked{% endif %}>
-            Apenas Favoritos
-        </label>
+<div class="container">
+    <h1 class="mb-4 text-center">Explorar Anúncios</h1>
+    <form method="get" class="row g-3 align-items-center mb-4">
+        <div class="col-auto">
+            <label for="categoria" class="col-form-label">Filtrar por categoria:</label>
+        </div>
+        <div class="col-auto">
+            <select name="categoria" id="categoria" class="form-select" onchange="this.form.submit()">
+                <option value="">Todas</option>
+                {% for categoria in categorias %}
+                    <option value="{{ categoria.id }}" {% if categoria_id == categoria.id %}selected{% endif %}>{{ categoria.nome }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        {% if current_user.is_authenticated %}
+        <div class="col-auto">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="favoritos" value="1" id="favoritos" onchange="this.form.submit()" {% if favoritos_only %}checked{% endif %}>
+                <label class="form-check-label" for="favoritos">Apenas Favoritos</label>
+            </div>
+        </div>
+        {% endif %}
+        <div class="col-auto">
+            <noscript><button type="submit" class="btn btn-primary btn-sm">Filtrar</button></noscript>
+            {% if categoria_id or favoritos_only %}
+                <a href="{{ url_for('anuncio.explorar_anuncios') }}" class="btn btn-link btn-sm text-decoration-none">Limpar filtro</a>
+            {% endif %}
+        </div>
+    </form>
+    <div class="table-responsive">
+        <table class="table table-striped align-middle">
+            <thead class="table-primary">
+                <tr>
+                    <th>Título</th>
+                    <th>Preço</th>
+                    <th>Categoria</th>
+                    <th class="text-center">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for anuncio in anuncios %}
+                <tr>
+                    <td>{{ anuncio.titulo }}</td>
+                    <td>R$ {{ '{:,.2f}'.format(anuncio.preco).replace('.', ',') }}</td>
+                    <td>{{ anuncio.categoria.nome }}</td>
+                    <td class="text-center">
+                        <a href="{{ url_for('anuncio.publico_detail', id=anuncio.id) }}" class="btn btn-outline-primary btn-sm">Ver Detalhes</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% if anuncios|length == 0 %}
+        <div class="alert alert-info text-center mt-4">Nenhum anúncio encontrado.</div>
     {% endif %}
-    <noscript><button type="submit">Filtrar</button></noscript>
-    {% if categoria_id or favoritos_only %}
-        <a href="{{ url_for('anuncio.explorar_anuncios') }}">Limpar filtro</a>
-    {% endif %}
-</form>
-<table border="1">
-    <tr>
-        <th>Título</th>
-        <th>Preço</th>
-        <th>Categoria</th>
-        <th>Ações</th>
-    </tr>
-    {% for anuncio in anuncios %}
-    <tr>
-        <td>{{ anuncio.titulo }}</td>
-        <td>R$ {{ anuncio.preco }}</td>
-        <td>{{ anuncio.categoria.nome }}</td>
-        <td>
-            <a href="{{ url_for('anuncio.publico_detail', id=anuncio.id) }}">Ver Detalhes</a>
-        </td>
-    </tr>
-    {% endfor %}
-</table>
+</div>
 {% endblock %}

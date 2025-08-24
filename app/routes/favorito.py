@@ -43,4 +43,7 @@ def remover_favorito(id):
     db.session.delete(favorito)
     db.session.commit()
     flash('Favorito removido com sucesso!', 'success')
+    next_url = request.form.get('next')
+    if next_url:
+        return redirect(next_url)
     return redirect(url_for('favorito.list_favorito'))

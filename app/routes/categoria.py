@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from flask_login import login_required
+from flask_login import login_required, current_user
 
 from ..models.categoria import Categoria
 from .. import db
@@ -9,7 +9,7 @@ categoria_bp = Blueprint('categoria', __name__, template_folder='templates/categ
 @categoria_bp.route('/')
 @login_required
 def list_categoria():
-    categorias = Categoria.query.all()
+    categorias = Categoria.query.filter_by(criado_por_id=current_user.id).all()
     return render_template('categoria/list.html', categorias=categorias)
 
 @categoria_bp.route('/create', methods=['GET', 'POST'])
@@ -20,7 +20,7 @@ def create_categoria():
         if Categoria.query.filter_by(nome=nome).first():
             flash('Categoria já existe!', 'danger')
             return redirect(url_for('categoria.create_categoria'))
-        categoria = Categoria(nome=nome)
+        categoria = Categoria(nome=nome, criado_por_id=current_user.id)
         db.session.add(categoria)
         db.session.commit()
         flash('Categoria criada com sucesso!', 'success')
@@ -30,13 +30,15 @@ def create_categoria():
 @categoria_bp.route('/<int:id>')
 @login_required
 def get_categoria(id):
-    categoria = Categoria.query.get_or_404(id)
-    return render_template('categoria/get_categoria.html', categoria=categoria)
+    return redirect(url_for('anuncio.explorar_anuncios', categoria=id))
 
 @categoria_bp.route('/<int:id>/edit', methods=['GET', 'POST'])
 @login_required
 def update_categoria(id):
     categoria = Categoria.query.get_or_404(id)
+    if categoria.criado_por_id != current_user.id:
+        flash('Você não tem permissão para editar esta categoria.', 'danger')
+        return redirect(url_for('categoria.list_categoria'))
     if request.method == 'POST':
         nome = request.form['nome']
         if Categoria.query.filter(Categoria.nome == nome, Categoria.id != id).first():
@@ -52,6 +54,9 @@ def update_categoria(id):
 @login_required
 def delete_categoria(id):
     categoria = Categoria.query.get_or_404(id)
+    if categoria.criado_por_id != current_user.id:
+        flash('Você não tem permissão para excluir esta categoria.', 'danger')
+        return redirect(url_for('categoria.list_categoria'))
     if categoria.anuncios:
         flash('Não é possível excluir uma categoria com anúncios vinculados.', 'danger')
         return redirect(url_for('categoria.list_categoria'))

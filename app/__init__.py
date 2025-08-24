@@ -1,10 +1,12 @@
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_required, current_user
+from flask_migrate import Migrate
 
 db = SQLAlchemy()
 login = LoginManager()
 login.login_view = 'auth.login'
+migrate = Migrate()
 
 def create_app():
     app = Flask(__name__)
@@ -12,6 +14,7 @@ def create_app():
 
     db.init_app(app)
     login.init_app(app)
+    migrate.init_app(app, db)
 
     from .routes.auth      import auth_bp
     from .routes.anuncio   import anuncio_bp
