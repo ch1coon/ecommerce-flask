@@ -72,4 +72,3 @@ def excluir_resposta(id):
     db.session.commit()
     flash('Resposta excluída com sucesso!', 'success')
     return redirect(url_for('resposta.listar_respostas'))
-
